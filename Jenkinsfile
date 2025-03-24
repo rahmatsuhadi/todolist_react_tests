@@ -1,10 +1,11 @@
 pipeline {
     agent any
 
-    triggers {
-        pollSCM('H/1 * * * *')  // Memeriksa perubahan setiap 1 menit
+    tools {
+        nodejs 'NodeJS 16' // Sesuaikan dengan nama di Global Tool Configuration
     }
-    environment{
+
+    environment {
         DOCKER_IMAGE = "todo-list-image"  // Ganti dengan nama image Docker
         DOCKER_TAG = "latest"
         CONTAINER_NAME = "app-todo-list"
@@ -18,23 +19,33 @@ pipeline {
                 }
             }
         }
-        stage('Install Dependencies && Run Tests') {
+
+        stage('Install Dependencies') {
             steps {
-                script {
-                    sh 'npm install'
-                    echo 'Install Library yang diperluan....'
-                    // testing aplikasi
-                    echo "menjalankan test pada code program untuk pengetesan...."
-                    sh 'npm test -- --watchAll=false'
+                sh 'npm install'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'npm test -- --watchAll=false'
+            }
+            post {
+                success {
+                    junit 'test-results.xml' // Sesuaikan dengan lokasi file hasil tes
+                }
+                failure {
+                    echo 'Tests failed!'
                 }
             }
         }
-        stage('Build') {
+
+        stage('Build Docker Image') {
             steps {
-                echo 'Melakukan build image docker....'
-                sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
+                sh "docker build -t $DOCKER_IMAGE:$DOCKER_TAG ."
             }
         }
+
         stage('Deploy') {
             steps {
                 script {
@@ -48,6 +59,15 @@ pipeline {
                     """
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
