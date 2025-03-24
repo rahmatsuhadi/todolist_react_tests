@@ -5,7 +5,8 @@ FROM node:16-alpine AS build
 WORKDIR /app
 
 # Menyalin package.json dan package-lock.json sebelum menginstal dependencies
-COPY package.json package-lock.json ./
+# COPY package.json package-lock.json ./
+COPY package*.json ./
 
 # Install 
 RUN npm install
