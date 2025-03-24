@@ -28,11 +28,12 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'npm test -- --watchAll=false'
+                sh 'npm test -- --watchAll=false --reporters=default --reporters=jest-junit'
+                
             }
             post {
                 success {
-                    junit 'test-results.xml' // Sesuaikan dengan lokasi file hasil tes
+                    junit 'test-results/jest-junit.xml' // Sesuaikan dengan lokasi file hasil tes
                 }
                 failure {
                     echo 'Tests failed!'
