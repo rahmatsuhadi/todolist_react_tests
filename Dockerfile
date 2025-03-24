@@ -12,7 +12,9 @@ ENV NODE_OPTIONS=--openssl-legacy-provider
 COPY package*.json ./
 
 # Install dependencies tanpa devDependencies
-RUN npm ci --omit=dev
+# RUN npm ci --omit=dev
+RUN npm install --unsafe-perm=true --legacy-peer-deps
+
 
 # Copy seluruh kode setelah dependencies terinstall
 COPY . .
