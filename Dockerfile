@@ -1,31 +1,33 @@
-# menggunakna node 16 sebagai base image
+# Stage 1: Build React App
 FROM node:16-alpine AS build
 
-#  direktori kerja dalam container
+# Set working directory
 WORKDIR /app
 
-# Menyalin package.json dan package-lock.json sebelum menginstal dependencies
-# COPY package.json package-lock.json ./
+# Set environment variable untuk menghindari OpenSSL error
+ENV NODE_ENV=production
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
+# Copy package.json & package-lock.json
 COPY package*.json ./
 
-RUN rm -rf node_modules package-lock.json
-# Install 
-RUN npm install
+# Install dependencies tanpa devDependencies
+RUN npm ci --omit=dev
 
-# Menyalin semua kode ke container
+# Copy seluruh kode setelah dependencies terinstall
 COPY . .
 
-# Build aplikasi
+# Build aplikasi React
 RUN npm run build
 
-# Menggunakan Nginx sebagai web server untuk serving React app
+# Stage 2: Setup Nginx untuk Serving React App
 FROM nginx:alpine
 
-# Salin file build ke direktori Nginx
+# Salin file build ke Nginx public directory
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Expose port 80 agar bisa diakses dari luar
+# Expose port 80
 EXPOSE 80
 
-# Menjalankan Nginx
+# Jalankan Nginx
 CMD ["nginx", "-g", "daemon off;"]
