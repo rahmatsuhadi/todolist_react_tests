@@ -19,7 +19,7 @@ COPY . .
 RUN npm run build
 
 # Menggunakan Nginx sebagai web server untuk serving React app
-FROM nginx:stable-alpine
+FROM nginx:alpine
 
 # Salin file build ke direktori Nginx
 COPY --from=build /app/build /usr/share/nginx/html
