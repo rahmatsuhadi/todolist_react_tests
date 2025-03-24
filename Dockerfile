@@ -13,8 +13,8 @@ COPY package*.json ./
 
 # Install dependencies tanpa devDependencies
 # RUN npm ci --omit=dev
-RUN npm install --unsafe-perm=true --legacy-peer-deps
-
+# RUN npm install --unsafe-perm=true --legacy-peer-deps
+RUN npm install 
 
 # Copy seluruh kode setelah dependencies terinstall
 COPY . .
