@@ -8,6 +8,7 @@ WORKDIR /app
 # COPY package.json package-lock.json ./
 COPY package*.json ./
 
+RUN rm -rf node_modules package-lock.json
 # Install 
 RUN npm install
 
