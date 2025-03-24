@@ -44,7 +44,7 @@ pipeline {
                     
                     echo "Menjalankan container baru..."
                     sh """
-                    docker run -d --name $CONTAINER_NAME -p 3000:3000 $DOCKER_IMAGE:$DOCKER_TAG
+                    docker run -d --name $CONTAINER_NAME -p 3000:80 $DOCKER_IMAGE:$DOCKER_TAG
                     """
                 }
             }
